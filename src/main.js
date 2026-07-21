@@ -17,6 +17,8 @@ const btnChange = document.getElementById("btn-change");
 const bossToggle = document.getElementById("boss-toggle");
 const awayName = document.getElementById("away-name");
 const fpsEl = document.getElementById("fps");
+const powerbar = document.getElementById("powerbar");
+const powerFill = powerbar.querySelector("i");
 
 const input = createInput();
 const game = new Game(canvas, input.state);
@@ -123,6 +125,14 @@ function loop(now) {
 
   clock.textContent = game.clockText();
   banner.classList.toggle("hidden", game.flash <= 0);
+
+  // barra de forca do chute
+  if (game.charge > 0.001) {
+    powerbar.classList.add("on");
+    powerFill.style.width = `${game.charge * 100}%`;
+  } else {
+    powerbar.classList.remove("on");
+  }
 
   if (game.over) {
     endTitle.textContent = game.resultText();

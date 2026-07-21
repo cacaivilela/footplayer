@@ -479,6 +479,8 @@ export class Game {
     this.flash = 0;
     this.prevReset = false;
     this.kickCooldown = 0;
+    this.charge = 0; // carga do chute (0..1)
+    this.prevKick = false;
     this.kickoff();
     this.emitScore();
   }
@@ -639,7 +641,7 @@ export class Game {
     this.collidePlayers();
     this.collidePlayersWithPosts();
     this.updateBall();
-    this.handleKicks();
+    this.handleKicks(dt);
     this.checkGoal();
   }
 
@@ -861,17 +863,28 @@ export class Game {
     b.vz = dirZ * power;
   }
 
-  handleKicks() {
+  handleKicks(dt) {
     const b = this.ball;
-    // chute do jogador controlado (Espaco)
     const p = this.controlled;
-    if (this.input.kick && this.kickCooldown <= 0) {
-      if (len(b.x - p.x, b.z - p.z) < p.r + b.r + 3) {
-        const power = this.homeStats ? this.homeStats.kickPower : CONFIG.ball.kickPower;
-        this.kickBall(p.dirX, p.dirZ, power);
+    const c = CONFIG.player;
+    const near = len(b.x - p.x, b.z - p.z) < p.r + b.r + 3;
+
+    if (this.input.kick) {
+      // segurando Espaco: vai carregando a forca (fora do cooldown)
+      if (this.kickCooldown <= 0) {
+        this.charge = clamp(this.charge + dt / c.kickChargeTime, 0, 1);
+      }
+    } else {
+      // soltou o Espaco: se estava carregando e esta perto da bola, chuta
+      if (this.prevKick && this.charge > 0 && this.kickCooldown <= 0 && near) {
+        const base = this.homeStats ? this.homeStats.kickPower : CONFIG.ball.kickPower;
+        const mult = 1 + this.charge * (c.kickChargeMax - 1);
+        this.kickBall(p.dirX, p.dirZ, base * mult);
         this.kickCooldown = 12;
       }
+      this.charge = 0;
     }
+    this.prevKick = this.input.kick;
 
     // chutes da IA: qualquer jogador da IA perto da bola chuta pro gol adversario
     this.aiKicks(this.home, true);

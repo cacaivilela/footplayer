@@ -66,6 +66,8 @@ export const CONFIG = {
     reverseAccel: 0.06,
     turnRate: 0.055,
     friction: 0.9,
+    kickChargeTime: 0.8, // segundos para carregar o chute no maximo
+    kickChargeMax: 2.4, // multiplicador da forca com carga cheia
   },
   // jogadores controlados pela IA (companheiros e adversarios)
   ai: {
@@ -83,7 +85,7 @@ export const CONFIG = {
   ball: {
     radius: 1.6,
     friction: 0.985,
-    maxSpeed: 3.6,
+    maxSpeed: 6.5, // teto maior para os chutes carregados valerem a pena
     kickPower: 2.7,
     push: 0.9,
   },
