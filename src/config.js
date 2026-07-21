@@ -71,9 +71,9 @@ export const CONFIG = {
   },
   // jogadores controlados pela IA (companheiros e adversarios)
   ai: {
-    maxSpeed: 0.5, // bem mais lento que o jogador (1.35) -> CPU bem fraca
-    steer: 0.05, // correcao de rota fraca (reage devagar e mal)
-    kickCooldown: 70, // quase nao chuta
+    maxSpeed: 0.9, // rival melhorado -> mais rapido e participativo
+    steer: 0.11, // corrige melhor a rota
+    kickCooldown: 34, // chuta com mais frequencia
   },
   colors: {
     home: "#2d6cdf", // azul (seu time)
@@ -127,7 +127,7 @@ export const CONFIG = {
     color: "#6cabdd",
     skin: "#ffdbac",
     size: 1.4,
-    ai: { maxSpeed: 1.25, steer: 0.17, kickCooldown: 14 },
+    ai: { maxSpeed: 1.0, steer: 0.12, kickCooldown: 26 }, // boss piorado (menos brutal)
   },
   // camera de terceira pessoa que segue o jogador controlado
   camera: {

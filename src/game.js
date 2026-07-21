@@ -4,6 +4,9 @@ import { CONFIG } from "./config.js";
 // ---------- utilidades ----------
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const len = (x, z) => Math.hypot(x, z);
+const YAXIS = new THREE.Vector3(0, 1, 0);
+const ZAXIS = new THREE.Vector3(0, 0, 1);
+const KICK_LEAN_MAX = 0.5; // inclinacao (rad) do jogador com o chute totalmente carregado
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -81,6 +84,8 @@ export class Game {
 
     this._camPos = new THREE.Vector3();
     this._camLook = new THREE.Vector3();
+    this._qHead = new THREE.Quaternion();
+    this._qLean = new THREE.Quaternion();
 
     this.initThree();
     this.buildWorld();
@@ -962,8 +967,16 @@ export class Game {
 
     for (let i = 0; i < this.count; i++) {
       const h = this.home[i];
-      this.homeMeshes[i].position.set(h.x, 0, h.z);
-      this.homeMeshes[i].rotation.y = -h.heading;
+      const hm = this.homeMeshes[i];
+      hm.position.set(h.x, 0, h.z);
+      if (i === this.activeHome && this.charge > 0.001) {
+        // jogador controlado se inclina pra tras conforme carrega o chute
+        this._qHead.setFromAxisAngle(YAXIS, -h.heading);
+        this._qLean.setFromAxisAngle(ZAXIS, this.charge * KICK_LEAN_MAX);
+        hm.quaternion.copy(this._qHead).multiply(this._qLean);
+      } else {
+        hm.rotation.set(0, -h.heading, 0);
+      }
       const a = this.away[i];
       this.awayMeshes[i].position.set(a.x, 0, a.z);
       this.awayMeshes[i].rotation.y = -a.heading;
