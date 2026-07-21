@@ -1,4 +1,5 @@
 import "./style.css";
+import "./music.js";
 import { Game } from "./game.js";
 import { createInput } from "./input.js";
 import { CONFIG } from "./config.js";
