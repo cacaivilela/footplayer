@@ -1,0 +1,18 @@
+{
+  "name": "footplayer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Footplayer — futebol 3D top-down (Three.js): 1v1 com 52 jogadores, modo boss vs Haaland e gramado interativo.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  }
+}

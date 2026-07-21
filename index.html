@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Footplayer</title>
+    <!-- PWA: dá pra instalar o jogo como app -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#1f7a34" />
+    <link rel="icon" type="image/png" href="./icon-192.png" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Footplayer" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="hud">
+        <div class="team team--home">
+          <span class="team__name">VOCE</span>
+          <span class="score" id="score-home">0</span>
+        </div>
+        <div class="clock" id="clock">00:00</div>
+        <div class="team team--away">
+          <span class="score" id="score-away">0</span>
+          <span class="team__name" id="away-name">CPU</span>
+        </div>
+      </header>
+
+      <div class="stage">
+        <canvas id="game"></canvas>
+
+        <div class="fps" id="fps">-- FPS</div>
+
+        <div class="banner hidden" id="banner">GOL!</div>
+
+        <div class="charselect" id="charselect">
+          <div class="charselect__title">Escolha seu jogador</div>
+          <button class="boss-toggle" id="boss-toggle">Modo Boss: OFF</button>
+          <div class="charselect__grid" id="char-grid"></div>
+        </div>
+
+        <div class="endscreen hidden" id="endscreen">
+          <div class="endscreen__title" id="end-title">FIM DE JOGO</div>
+          <div class="endscreen__score" id="end-score">0 x 0</div>
+          <div class="endscreen__hint">Pressione R para jogar de novo</div>
+          <button class="btn" id="btn-change">Trocar personagem</button>
+        </div>
+      </div>
+
+      <footer class="controls">
+        <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> ou <kbd>Setas</kbd> mover . <kbd>Espaco</kbd> chutar . <kbd>R</kbd> reiniciar</p>
+      </footer>
+    </div>
+
+    <button id="installBtn" aria-label="Instalar o jogo">📲 Instalar</button>
+
+    <script type="module" src="/src/main.js"></script>
+    <script>
+      // registra o service worker (necessário pro app ser instalável e funcionar offline)
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        });
+      }
+      // botão "Instalar": aparece quando o navegador permite instalar o app
+      let deferredPrompt = null;
+      const installBtn = document.getElementById("installBtn");
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = "block";
+      });
+      installBtn.addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+        installBtn.style.display = "none";
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      });
+      window.addEventListener("appinstalled", () => {
+        installBtn.style.display = "none";
+      });
+    </script>
+  </body>
+</html>
